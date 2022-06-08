@@ -1,4 +1,21 @@
-import { RemoteTemplate } from './RemoteTemplate.js';
+/*
+ * Implements simple state management & templating
+ *
+ * data-content=var : contents of element are replaced with value of var
+ *
+ * data-attr=var
+ * data-attr-value=val : attribute named var of element, gets set to val
+ *
+ * data-if=var : show element if var is true
+ *
+ * data-if-not=var : show element if var is false
+ *
+ * data-list=var
+ * data-template=templ: for each element in list var, render either a <li>
+ *                      element if no template (templ) is provided, or render
+ *                      the contents of templ, and extrapolate any possible
+ *                      template values
+ */
 
 export class StateRenderer {
     constructor(templateRoot) {
@@ -7,6 +24,7 @@ export class StateRenderer {
     }
 
     setState(state) {
+        this.oldState = this.state;
         this.state = state;
     }
 
@@ -37,6 +55,10 @@ export class StateRenderer {
             const attrName = sl.dataset.attr;
             const propName = sl.dataset.attrValue;
 
+            if (!this.isValueChanged(propName, scope)) {
+                return
+            }
+
             if (!attrName) { return; }
 
             sl.setAttribute(attrName, this.select(propName, scope) || '');
@@ -48,9 +70,14 @@ export class StateRenderer {
 
         listSlots.forEach((sl) => {
             const listName = sl.dataset.list;
+
+            if (!this.isValueChanged(listName, scope)) {
+                return
+            }
+
             const templateName = sl.dataset.template;
             const template = templateName && this.templateRoot.querySelector(`template[data-name=${templateName}`);
-            const listData = this.select(listName);
+            const listData = this.select(listName, scope);
 
             if (!sl.shadowRoot) {
                 sl.attachShadow({ mode: 'open' });
@@ -89,6 +116,11 @@ export class StateRenderer {
 
         ifSlots.forEach((sl) => {
             const propName = sl.dataset.if;
+
+            if (!this.isValueChanged(propName, scope)) {
+                return
+            }
+
             const value = this.select(propName, scope);
 
             if (value) {
@@ -98,6 +130,11 @@ export class StateRenderer {
 
         ifNotSlots.forEach((sl) => {
             const propName = sl.dataset.ifNot;
+
+            if (!this.isValueChanged(propName, scope)) {
+                return
+            }
+
             const value = this.select(propName, scope);
 
             if (!value) {
@@ -137,12 +174,31 @@ export class StateRenderer {
         }
     }
 
-    select(propName, scope) {
-        if (!this.state || (this.namespace && !this.state[this.namespace])) {
+    isValueChanged(propName, scope) {
+        const newValue = this.select(propName, scope);
+        const oldValue = this.select(propName, scope, this.oldState);
+
+        if (oldValue === newValue) {
+            return false;
+        }
+
+        if (typeof newValue !== typeof oldValue) {
+            return true;
+        }
+
+        if (typeof newValue === 'object') {
+            return JSON.stringify(newValue) !== JSON.stringify(oldValue);
+        }
+
+        return true;
+    }
+
+    select(propName, scope, state = this.state) {
+        if (!state || (this.namespace && !state[this.namespace])) {
             return;
         }
 
-        const state = this.getCurrentState(scope);
+        const currentState = this.getSubState(scope, state);
 
         const indexedAccess = propName.match(/\[[0-9a-zA-Z_'"-]+\]$/);
 
@@ -150,25 +206,25 @@ export class StateRenderer {
             const index = indexedAccess[0].replace(/['"\[\]]/g,'');
             const indexable = propName.replace(indexedAccess[0], '');
 
-            return state[indexable] && state[indexable][index];
+            return currentState[indexable] && currentState[indexable][index];
         }
 
-        return state[propName];
+        return currentState[propName];
     }
 
-    getCurrentState(scope) {
+    getSubState(scope, state) {
         const indexedAccess = scope && scope.match(/\[[0-9a-zA-Z_'"-]+\]$/);
 
         if (this.namespace && indexedAccess) {
             const index = indexedAccess[0].replace(/['"\[\]]/g,'');
             const indexable = scope.replace(indexedAccess[0], '');
-            return this.state[this.namespace][indexable][index];
+            return state[this.namespace][indexable][index];
         } else if (this.namespace && scope) {
-            return this.state[this.namespace][scope];
+            return state[this.namespace][scope];
         } else if(this.namespace) {
-            return this.state[this.namespace];
+            return state[this.namespace];
         }
 
-        return this.state;
+        return state;
     }
 }

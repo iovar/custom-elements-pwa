@@ -1,3 +1,8 @@
+/*
+ * Loads a remote html file, and a remote stylesheet, and inserts
+ * them as contents of the provided root element.
+ * Both urls are optional.
+ */
 export class RemoteTemplate {
     constructor(root, templateURL, stylesURL) {
         this.root = root;

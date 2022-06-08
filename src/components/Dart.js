@@ -14,7 +14,7 @@ export class DartComponent extends BaseComponent {
                     ...(state.dart || {}),
                     count: action.payload,
                     input: [action.payload, `${action.payload} + 1`],
-                    list: [1, 2, 3],
+                    list: (state && state.dart && state.dart.list) || [1, 2, 3],
                     list2: [
                         { test: 't3', input: [action.payload + 4], count: action.payload + 4 },
                         { test: 't2', input: [action.payload + 5], count: action.payload + 5 },

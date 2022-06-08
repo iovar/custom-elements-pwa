@@ -1,4 +1,7 @@
-1. Improve performance on lists, attributes, content 
-2. Add lazy load component
-3. Add documentation? (Intro, Tutorial, API, tips)
-
+1. Header
+2. Footer
+3. GameTile (screenshot, title, description, start game, exit game)
+4. manifest & PWA
+5. responsive
+6. popup with info
+7. add simple games
