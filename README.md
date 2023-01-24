@@ -1,1 +1,1 @@
-# Arcade
+# Simple Custom Elements experiment
