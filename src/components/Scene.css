@@ -1,0 +1,10 @@
+.root {
+    width: 10rem;
+    height: 10rem;
+    position: relative;
+    perspective: 100px;
+}
+
+.floor {
+    background: blue;
+}
