@@ -1,1 +1,1 @@
-# Simple Custom Elements experiment
+# Simple Custom Elements & PWA boilerplate

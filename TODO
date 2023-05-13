@@ -1,7 +1,4 @@
-1. Header
-2. Footer
-3. GameTile (screenshot, title, description, start game, exit game)
-4. manifest & PWA
-5. responsive
-6. popup with info
-7. add simple games
+1. icon
+2. cleanup ?
+3. generate sw.js scripte
+4. fix caching to always prefer network versions
