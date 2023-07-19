@@ -1,3 +1,20 @@
 <section class="viewport">
-    <h1>Viewport</h1>
+    <h1 data-content="title"></h1>
+    <h2 data-content="val"></h2>
+    <h2 data-content="flag"></h2>
+    <ul data-callback="onclick:click" data-list="items:itemsList">
+        <template data-name="itemsList">
+            <li>item <span data-content="value"></span></li>
+        </template>
+    </ul>
+    <div data-attr="class:title"></div>
+    <div data-if="flag">show if flag</div>
+    <!-- <div data-if="not:flag">hide if flag</div> -->
+    <div class="walls">
+        <div class="wall north"></div>
+        <div class="wall east"></div>
+        <div class="wall south"></div>
+        <div class="wall west"></div>
+        <div class="wall ground"></div>
+    </div>
 </section>

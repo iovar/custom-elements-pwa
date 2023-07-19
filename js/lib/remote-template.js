@@ -1,38 +1,16 @@
-/*
- * Loads a remote html file, and a remote stylesheet, and inserts
- * them as contents of the provided root element.
- * Both urls are optional.
- */
-export class RemoteTemplate {
-    constructor(root, templateURL, stylesURL) {
-        this.root = root;
-        this.templateURL = templateURL;
-        this.stylesURL =  stylesURL;
+async function fetchTemplatePart(url) {
+    try {
+        const response = await fetch(url);
+        return await response.text();
+    } catch (e) {
+        console.error(`Failed to load ${url} with error`, e);
     }
+    return '';
+}
 
-    async load() {
-        const template = this.templateURL && await this.fetchTemplate(this.templateURL);
-        const styles = this.stylesURL && await this.fetchStyles(this.stylesURL);
+export async function getRemoteTemplate(templateURL = '', stylesURL = '') {
+    const template = templateURL && await fetchTemplatePart(templateURL);
+    const styles = stylesURL && `<style>${await fetchTemplatePart(stylesURL)}</style>`;
 
-        this.root.innerHTML = `${styles ?? ''}${template ?? ''}`;
-    }
-
-    async fetchTemplate(url) {
-        try {
-            const response = await fetch(url);
-            return await response.text();
-        } catch (e) {
-            console.error('Failed to load template', e);
-        }
-    }
-
-    async fetchStyles(url) {
-        try {
-            const response = await fetch(url);
-            const styles  = await response.text();
-            return `<style>${styles}</style>`;
-        } catch (e) {
-            console.error('Failed to load styles', e);
-        }
-    }
+    return `${styles ?? ''}${template ?? ''}`;
 }

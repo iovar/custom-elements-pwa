@@ -1,51 +1,49 @@
-const CACHE_ENABLED = false;
-
-const cacheName = 'cache-v1';
+const cacheName = 'cache-v2';
 
 const cachedFiles = [
-        './',
-        'js/lib/base-component.js',
-        'js/lib/remote-template.js',
-        'js/register-components.js',
-        'icon.png',
-        'index.html',
-        'sw.js',
-        'manifest.json',
+    './',
+    'js/lib/base-component.js',
+    'js/lib/remote-template.js',
+    'js/register-components.js',
+    'icon.png',
+    'index.html',
+    'sw.js',
+    'manifest.json',
 ];
 
 const addFilesToCache = async () => {
-        const cache = await caches.open(cacheName);
-        return cache.addAll(cachedFiles);
+    const cache = await caches.open(cacheName);
+    return cache.addAll(cachedFiles);
 };
 
 const removeStaleCaches = async () => {
-        const keys = await caches.keys();
-        const staleKeys = keys.filter((key) => key !== cacheName);
+    const keys = await caches.keys();
+    const staleKeys = keys.filter((key) => key !== cacheName);
 
-        return Promise.all(key.map((key) => caches.delete(key)));
+    return Promise.all(staleKeys.map((key) => caches.delete(key)));
 }
 
 const fetchFromNetwork = async (cache, event) => {
-        const networkResponse = await fetch(event.request);
-        cache.put(event.request, networkResponse.clone());
+    const networkResponse = await fetch(event.request);
+    cache.put(event.request, networkResponse.clone());
 
-        return networkResponse;
+    return networkResponse;
 };
 
 const fetchFromCacheFirst = async (event) => {
-        const cache = await caches.open(cacheName);
-        const response = await cache.match(event.request);
+    const cache = await caches.open(cacheName);
+    const response = await cache.match(event.request);
 
-        if (response) {
-                    return response;
-                }
+    if (response && !navigator.onLine) {
+        return response;
+    }
 
-        return fetchFromNetwork(cache, event);
+    return fetchFromNetwork(cache, event);
 };
 
 self.addEventListener('install', (event) => {
-        self.skipWaiting();
-        event.waitUntil(addFilesToCache());
+    self.skipWaiting();
+    event.waitUntil(addFilesToCache());
 });
 
 self.addEventListener('activate', (event) => event.waitUntil(removeStaleCaches()));

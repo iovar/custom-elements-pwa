@@ -1,7 +1,54 @@
 .viewport {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-  background-color: #faf;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    color: #000;
+    background-color: #faf;
+    perspective: 0px;
+    /* animation: move-away 5s linear infinite alternate; */
+}
+
+@keyframes move-away {
+    from {perspective: 0px;}
+    to {perspective: 1000px;}
+}
+.walls {
+    transform-style: preserve-3d;
+    position: relative;
+    top: 40vh;
+    left: 40vw;
+}
+
+.wall {
+    position: absolute;
+    top: 0;
+    width: 256px;
+    height: 256px;
+    --s: 120px; /* control the size */
+    --c1: #4E395D;
+    --c2: #8EBE94;
+    --_g:var(--c1) 15%,var(--c2) 0 28%,#0000 0 72%,var(--c2) 0 85%,var(--c1) 0;
+
+    background:
+        conic-gradient(from 90deg at 2px 2px,#0000 25%,var(--c1) 0) -1px -1px,
+        linear-gradient(-45deg,var(--_g)),linear-gradient(45deg,var(--_g)),
+        conic-gradient(from 90deg at 40% 40%,var(--c1) 25%,var(--c2) 0)
+        calc(var(--s)/-5) calc(var(--s)/-5);
+    background-size: var(--s) var(--s);
+}
+
+.south {
+    transform: translate3d(0, 128px, 128px) rotate3d(1, 0, 0, 90deg);
+}
+
+.north {
+    transform: translate3d(0, -128px, 128px) rotate3d(-1, 0, 0, 90deg);
+}
+
+.east {
+    transform: translate3d(-128px, 0, 128px) rotate3d(0, -1, 0, 90deg);
+}
+
+.west {
+    transform: translate3d(128px, 0, 128px) rotate3d(0, 1, 0, 90deg);
 }
