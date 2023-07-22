@@ -2,14 +2,15 @@
     <h1 data-content="title"></h1>
     <h2 data-content="val"></h2>
     <h2 data-content="flag"></h2>
-    <ul data-callback="onclick:click" data-list="items:itemsList">
+    <ul data-callback="click:click" data-list="items:itemsList">
         <template data-name="itemsList">
             <li>item <span data-content="value"></span></li>
         </template>
     </ul>
+    <h2 data-content="stateVal"></h2>
     <div data-attr="class:title"></div>
-    <div data-if="flag">show if flag</div>
-    <!-- <div data-if="not:flag">hide if flag</div> -->
+    <div data-if="flag">show if flag <span data-content="flag"></span> <span data-content="val"></span></div>
+    <div data-if="not:flag">hide if flag <span data-content="flag"></span><span data-content="val"></span></div>
     <div class="walls">
         <div class="wall north"></div>
         <div class="wall east"></div>

@@ -3,6 +3,7 @@ const cacheName = 'cache-v2';
 const cachedFiles = [
     './',
     'js/lib/base-component.js',
+    'js/lib/dynamic-template.js',
     'js/lib/remote-template.js',
     'js/register-components.js',
     'icon.png',

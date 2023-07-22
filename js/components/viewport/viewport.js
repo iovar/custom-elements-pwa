@@ -8,15 +8,29 @@ export class Viewport extends BaseComponent {
 
     update() {
         setInterval(() => {
-            const props = JSON.parse(this.dataset.customProps);
-
+            const props = JSON.parse(this.dataset.props);
             props.flag = !props.flag;
-            props.val = props.val + 1;
-            this.dataset.customProps = JSON.stringify(props);
+            this.dataset.props= JSON.stringify(props);
         }, 3000);
+
+        setTimeout(() => {
+            const props = JSON.parse(this.dataset.props);
+            props.items = [...props.items, { value: 5 } ];
+            this.setStateValues({
+                ...this.state.values,
+                stateVal: 'some state value',
+            });
+            this.dataset.props = JSON.stringify(props);
+        }, 1000);
+
+        setInterval(() => {
+            const props = JSON.parse(this.dataset.props);
+            props.val = props.val + 1;
+            this.dataset.props= JSON.stringify(props);
+        }, 1245);
     }
 
     click() {
-        console.log('click');
+        console.log('click', this.props.items.length);
     }
 }
