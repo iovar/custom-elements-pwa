@@ -25,7 +25,7 @@ function isValueChanged(propName, scope, oldScope) {
 }
 
 function getValueFromContext(name, { state, props, oldProps }) {
-    return props.hasOwnProperty(name)
+    return props?.hasOwnProperty(name)
         ?  {
             value: props[name],
             oldValue: oldProps?.[name],

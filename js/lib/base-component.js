@@ -25,7 +25,7 @@ export class BaseComponent extends HTMLElement {
         if (dynamic) {
             this.dynamic = dynamic;
             this.state = getEmptyTemplateState();
-            this.setProps(JSON.parse(this.dataset.props));
+            this.dataset.props && this.setProps(JSON.parse(this.dataset.props));
             updateCallbackSlots(this.shadowRoot, this);
         }
     }
