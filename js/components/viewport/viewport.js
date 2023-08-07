@@ -1,4 +1,6 @@
-import { BaseComponent } from '/js/lib/base-component.js';
+import config from '../../../config.js';
+
+const { BaseComponent } = await import(`${config.LIB_DIR}/base-component.js`);
 
 export class Viewport extends BaseComponent {
     constructor() {
