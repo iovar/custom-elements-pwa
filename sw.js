@@ -1,19 +1,25 @@
-const cacheName = 'cache-v2';
+const cacheName = 'cache-v3';
 
-const cachedFiles = [
-    './',
-    'js/lib/base-component.js',
-    'js/lib/dynamic-template.js',
-    'js/lib/remote-template.js',
-    'js/register-components.js',
-    'icon.png',
-    'index.html',
-    'sw.js',
-    'manifest.json',
-];
+const getCachedFiles = async () => {
+    const response = await fetch('./config.json');
+    const config = await response.json();
+
+    return [
+        './',
+        `${config.LIB_DIR}/base-component.js`,
+        `${config.LIB_DIR}/dynamic-template.js`,
+        `${config.LIB_DIR}/remote-template.js`,
+        'js/register-components.js',
+        'icon.png',
+        'index.html',
+        'sw.js',
+        'manifest.json',
+    ];
+};
 
 const addFilesToCache = async () => {
     const cache = await caches.open(cacheName);
+    const cachedFiles = await getCachedFiles();
     return cache.addAll(cachedFiles);
 };
 
