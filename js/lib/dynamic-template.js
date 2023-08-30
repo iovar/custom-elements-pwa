@@ -37,13 +37,13 @@ function getValueFromContext(name, { state, props, oldProps }) {
         };
 }
 
-function getListTemplate(root, templateName, context) {
+function getListTemplate(node, templateName, context) {
     const existing = context.state.listSlots.templates[templateName];
     if (existing) {
         return existing;
     }
 
-    const newTemplate = templateName && root.querySelector(`template[data-name=${templateName}`);
+    const newTemplate = templateName && node.querySelector(`template[data-name=${templateName}`);
     context.state.listSlots.templates = {
         ...context.state.listSlots.templates,
         [templateName]: newTemplate,
@@ -68,7 +68,7 @@ function createConditionalPlaceholder(elem, showOnTrue, conditionalSlots) {
     }
 }
 
-function toggleConditionalVisibility(elem, showOnTrue, value, context) {
+function toggleConditionalVisibility(elem, root, showOnTrue, value, context) {
     const { state: { conditionalSlots } } = context;
     if(!elem.dataset.slotIndex) {
         createConditionalPlaceholder(elem, showOnTrue, conditionalSlots);
@@ -76,15 +76,15 @@ function toggleConditionalVisibility(elem, showOnTrue, value, context) {
 
     if (showOnTrue !== value && elem !== conditionalSlots.showOnFalse[elem.dataset.slotIndex]) {
         elem.replaceWith(conditionalSlots.showOnFalse[elem.dataset.slotIndex]);
-        updateTemplate(conditionalSlots.showOnFalse[elem.dataset.slotIndex], context);
+        updateTemplate(conditionalSlots.showOnFalse[elem.dataset.slotIndex], root, context);
     } else if (showOnTrue !== value && elem !== conditionalSlots.showOnTrue[elem.dataset.slotIndex]) {
         elem.replaceWith(conditionalSlots.showOnTrue[elem.dataset.slotIndex]);
-        updateTemplate(conditionalSlots.showOnTrue[elem.dataset.slotIndex], context);
+        updateTemplate(conditionalSlots.showOnTrue[elem.dataset.slotIndex], root, context);
     }
 }
 
-function updateContentSlots(root, context) {
-    const contentSlots = root.querySelectorAll(FLAT_SELECTORS[0]);
+function updateContentSlots(node, context) {
+    const contentSlots = node.querySelectorAll(FLAT_SELECTORS[0]);
 
     contentSlots.forEach((elem) => {
         const propName = elem.dataset.content;
@@ -96,8 +96,8 @@ function updateContentSlots(root, context) {
     });
 }
 
-function updateAttrSlots(root, context) {
-    const attrSlots = root.querySelectorAll(FLAT_SELECTORS[1]);
+function updateAttrSlots(node, context) {
+    const attrSlots = node.querySelectorAll(FLAT_SELECTORS[1]);
 
     attrSlots.forEach((elem) => {
         const [ attrName, propName ] = elem.dataset.attr.split(':');
@@ -109,8 +109,8 @@ function updateAttrSlots(root, context) {
     });
 }
 
-function updateListSlots(root, context) {
-    const listSlots = root.querySelectorAll(FLAT_SELECTORS[2]);
+function updateListSlots(node, root, context) {
+    const listSlots = node.querySelectorAll(FLAT_SELECTORS[2]);
 
     listSlots.forEach((elem) => {
         const [ listName, templateName ] = elem.dataset.list.split(':');
@@ -126,15 +126,15 @@ function updateListSlots(root, context) {
                     ...context,
                     props: value[index],
                 };
-                updateTemplate(newChild, subContext);
+                updateTemplate(newChild, root, subContext);
                 elem.appendChild(newChild);
             });
         }
     });
 }
 
-function updateConditionalSlots(root, context) {
-    const ifSlots = root.querySelectorAll(FLAT_SELECTORS[3]);
+function updateConditionalSlots(node, root, context) {
+    const ifSlots = node.querySelectorAll(FLAT_SELECTORS[3]);
 
     ifSlots.forEach((elem) => {
         const parts = elem.dataset.if.split(':');
@@ -143,13 +143,13 @@ function updateConditionalSlots(root, context) {
         const { value, oldValue, changed } = getValueFromContext(propName, context);
 
         if (changed) {
-            toggleConditionalVisibility(elem, showOnTrue, value, context);
+            toggleConditionalVisibility(elem, root, showOnTrue, value, context);
         }
     });
 }
 
-export function updateCallbackSlots(root, context) {
-    const callbackSlots = root.querySelectorAll(FLAT_SELECTORS[4]);
+export function updateCallbackSlots(node, context) {
+    const callbackSlots = node.querySelectorAll(FLAT_SELECTORS[4]);
 
     callbackSlots.forEach((elem) => {
         const [ event, handler ] = elem.dataset.callback.split(':');
@@ -163,9 +163,9 @@ export function updateCallbackSlots(root, context) {
     });
 }
 
-export function updateTemplate(root, context) {
-    updateListSlots(root, context);
-    updateContentSlots(root, context);
-    updateAttrSlots(root, context);
-    updateConditionalSlots(root, context);
+export function updateTemplate(node, root, context) {
+    updateListSlots(node, root, context);
+    updateContentSlots(node, context);
+    updateAttrSlots(node, context);
+    updateConditionalSlots(node, root, context);
 }

@@ -28,7 +28,7 @@ export class BaseComponent extends HTMLElement {
             this.dynamic = dynamic;
             this.props = this.dataset.props ? JSON.parse(this.dataset.props) : this.oldProps;
             updateCallbackSlots(this.shadowRoot, this);
-            updateTemplate(this.shadowRoot, this);
+            updateTemplate(this.shadowRoot, this.shadowRoot, this);
         }
     }
 
@@ -39,7 +39,7 @@ export class BaseComponent extends HTMLElement {
                 values,
                 oldValues: this.state.values,
             };
-            updateTemplate(this.shadowRoot, this);
+            updateTemplate(this.shadowRoot, this.shadowRoot, this);
         }
     }
 
@@ -47,7 +47,7 @@ export class BaseComponent extends HTMLElement {
         if (props !== this.props) {
             this.oldProps = this.props || {};
             this.props = props;
-            updateTemplate(this.shadowRoot, this);
+            updateTemplate(this.shadowRoot, this.shadowRoot, this);
         }
     }
 
