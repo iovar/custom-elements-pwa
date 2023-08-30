@@ -1,6 +1,6 @@
 import config from '../../../config.js';
 
-const { BaseComponent } = await import(`${config.LIB_DIR}/base-component.js`);
+const { BaseComponent } = await import(`${config.BASE_PATH}/base-component.js`);
 
 export class Viewport extends BaseComponent {
     constructor() {

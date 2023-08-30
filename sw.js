@@ -1,14 +1,22 @@
 const cacheName = 'cache-v3';
 
+const getPathname = () => {
+    const { pathname } = self.location;
+    return pathname.substring(0, pathname.lastIndexOf(FILENAME));
+}
+
 const getCachedFiles = async () => {
     const response = await fetch('./config.json');
     const config = await response.json();
+    const BASE_PATH = config.prefixWithPathname
+        ? `${getPathname()}${config.LIB_DIR}`
+        : `${config.LIB_DIR}`;
 
     return [
         './',
-        `${config.LIB_DIR}/base-component.js`,
-        `${config.LIB_DIR}/dynamic-template.js`,
-        `${config.LIB_DIR}/remote-template.js`,
+        `${BASE_PATH}/base-component.js`,
+        `${BASE_PATH}/dynamic-template.js`,
+        `${BASE_PATH}/remote-template.js`,
         'js/register-components.js',
         'icon.png',
         'index.html',

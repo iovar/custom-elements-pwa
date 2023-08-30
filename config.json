@@ -1,1 +1,4 @@
-{ "LIB_DIR": "js/lib" }
+{
+    "LIB_DIR": "js/lib",
+    "prefixWithPathname": true
+}
