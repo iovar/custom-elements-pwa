@@ -4,6 +4,8 @@ import { getRemoteTemplate } from './remote-template.js';
 export class BaseComponent extends HTMLElement {
     static get observedAttributes() { return [ 'data-props' ]; }
     static defaultOptions = { mode: 'open', withStyles: true, dynamic: true, inline: false };
+    state = getEmptyTemplateState();
+    oldProps = {};
 
     constructor(url /* import.meta.url */, options = {}) {
         super();
@@ -24,9 +26,9 @@ export class BaseComponent extends HTMLElement {
 
         if (dynamic) {
             this.dynamic = dynamic;
-            this.state = getEmptyTemplateState();
-            this.dataset.props && this.setProps(JSON.parse(this.dataset.props));
+            this.props = this.dataset.props ? JSON.parse(this.dataset.props) : this.oldProps;
             updateCallbackSlots(this.shadowRoot, this);
+            updateTemplate(this.shadowRoot, this);
         }
     }
 
