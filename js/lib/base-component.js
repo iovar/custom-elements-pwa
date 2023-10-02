@@ -18,10 +18,7 @@ export class BaseComponent extends HTMLElement {
         if (inline) {
             this.shadowRoot.innerHTML = url;
         } else {
-            const basePath = new URL(url).pathname.replace(/.js$/, '');
-            const templateURL = `${basePath}.html`;
-            const stylesURL = withStyles ? `${basePath}.css` : null;
-            this.shadowRoot.innerHTML = await getRemoteTemplate(templateURL, stylesURL);
+            this.shadowRoot.innerHTML = await getRemoteTemplate(url, withStyles);
         }
 
         if (dynamic) {

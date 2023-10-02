@@ -1,6 +1,16 @@
 const SELECTORS = [ '[data-content]', '[data-attr]', '[data-list]', '[data-if]', '[data-callback]' ];
 const FLAT_SELECTORS = SELECTORS.map((selector) => `:not([data-list] ${selector})${selector}`);
 
+export function querySelectorAllWithRoot(node, query) {
+    const rootResult = node.matches && node.matches(query) ? [node] : [];
+    const results = node.querySelectorAll(query);
+
+    return [
+        ...rootResult,
+        ...results,
+    ];
+}
+
 export function getEmptyTemplateState() {
     const conditionalSlots = {
         count: 0,
@@ -84,7 +94,7 @@ function toggleConditionalVisibility(elem, root, showOnTrue, value, context) {
 }
 
 function updateContentSlots(node, context) {
-    const contentSlots = node.querySelectorAll(FLAT_SELECTORS[0]);
+    const contentSlots = querySelectorAllWithRoot(node, FLAT_SELECTORS[0]);
 
     contentSlots.forEach((elem) => {
         const propName = elem.dataset.content;
@@ -97,20 +107,23 @@ function updateContentSlots(node, context) {
 }
 
 function updateAttrSlots(node, context) {
-    const attrSlots = node.querySelectorAll(FLAT_SELECTORS[1]);
+    const attrSlots = querySelectorAllWithRoot(node, FLAT_SELECTORS[1]);
 
     attrSlots.forEach((elem) => {
-        const [ attrName, propName ] = elem.dataset.attr.split(':');
-        const { value, changed } = getValueFromContext(propName, context);
+        const attributes = elem.dataset.attr.split(',');
+        attributes.forEach((attr) => {
+            const [ attrName, propName ] = attr.split(':');
+            const { value, changed } = getValueFromContext(propName, context);
 
-        if (changed && attrName) {
-            elem.setAttribute(attrName, value || '');
-        }
+            if (changed && attrName) {
+                elem.setAttribute(attrName, (value === null || value === undefined) ? '' : value);
+            }
+        });
     });
 }
 
 function updateListSlots(node, root, context) {
-    const listSlots = node.querySelectorAll(FLAT_SELECTORS[2]);
+    const listSlots = querySelectorAllWithRoot(node, FLAT_SELECTORS[2]);
 
     listSlots.forEach((elem) => {
         const [ listName, templateName ] = elem.dataset.list.split(':');
@@ -134,7 +147,7 @@ function updateListSlots(node, root, context) {
 }
 
 function updateConditionalSlots(node, root, context) {
-    const ifSlots = node.querySelectorAll(FLAT_SELECTORS[3]);
+    const ifSlots = querySelectorAllWithRoot(node, FLAT_SELECTORS[3]);
 
     ifSlots.forEach((elem) => {
         const parts = elem.dataset.if.split(':');
@@ -149,7 +162,7 @@ function updateConditionalSlots(node, root, context) {
 }
 
 export function updateCallbackSlots(node, context) {
-    const callbackSlots = node.querySelectorAll(FLAT_SELECTORS[4]);
+    const callbackSlots = querySelectorAllWithRoot(node, FLAT_SELECTORS[4]);
 
     callbackSlots.forEach((elem) => {
         const [ event, handler ] = elem.dataset.callback.split(':');
